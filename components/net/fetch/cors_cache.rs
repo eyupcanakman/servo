@@ -189,4 +189,15 @@ impl CorsCache {
         self.cleanup();
         self.0.push(entry);
     }
+
+    /// Clear cache entries for a request
+    pub fn clear_entries_for_request(&mut self, request: &Request) {
+        self.clear_entries_for_origin_and_url(&request.origin, &request.current_url());
+    }
+
+    /// Clear cache entries for a specific origin and URL
+    pub fn clear_entries_for_origin_and_url(&mut self, origin: &Origin, url: &ServoUrl) {
+        self.cleanup();
+        self.0.retain(|e| !(e.origin == *origin && e.url == *url));
+    }
 }

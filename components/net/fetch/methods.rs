@@ -555,6 +555,9 @@ pub async fn main_fetch(
             {
                 // Substep 1.
                 request.response_tainting = ResponseTainting::CorsTainting;
+                // Clone origin and URL before moving fetch_params
+                let origin = request.origin.clone();
+                let url = request.current_url().clone();
                 // Substep 2.
                 let response = http_fetch(
                     fetch_params,
@@ -569,7 +572,7 @@ pub async fn main_fetch(
                 .await;
                 // Substep 3.
                 if response.is_network_error() {
-                    // TODO clear cache entries using request
+                    cache.clear_entries_for_origin_and_url(&origin, &url);
                 }
                 // Substep 4.
                 response
